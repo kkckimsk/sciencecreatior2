@@ -1,0 +1,1111 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>발명작품 계획서 제출</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #eef2f6;
+      --surface: #ffffff;
+      --line: #cfd8e3;
+      --text: #172033;
+      --muted: #5f6b7a;
+      --accent: #146c94;
+      --accent-dark: #0f5678;
+      --soft: #e6f3f7;
+      --warn: #9d5b08;
+      --danger: #a12626;
+      --ok: #176b45;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, "Noto Sans KR", sans-serif;
+      line-height: 1.45;
+    }
+
+    .app {
+      width: min(1120px, calc(100% - 28px));
+      margin: 24px auto 36px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 20px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(22px, 3vw, 32px);
+      letter-spacing: 0;
+    }
+
+    .deadline {
+      margin-top: 6px;
+      color: var(--danger);
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .status {
+      min-width: 220px;
+      max-width: 420px;
+      padding: 9px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: #f8fafc;
+      font-size: 14px;
+      text-align: right;
+    }
+
+    .status.ok {
+      color: var(--ok);
+      background: #eef8f2;
+      border-color: #b8dec8;
+    }
+
+    .status.warn {
+      color: var(--warn);
+      background: #fff8ea;
+      border-color: #efd59e;
+    }
+
+    .status.error {
+      color: var(--danger);
+      background: #fff0f0;
+      border-color: #efb4b4;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+    }
+
+    .side {
+      position: sticky;
+      top: 16px;
+      align-self: start;
+    }
+
+    .section-title {
+      margin: 4px 0 14px;
+      font-size: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #25324a;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid #b7c3d0;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      font-size: 15px;
+      padding: 10px 11px;
+    }
+
+    input[readonly] {
+      background: #f3f6f9;
+      color: #344054;
+    }
+
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .wide {
+      grid-column: 1 / -1;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--line);
+      margin: 18px 0;
+    }
+
+    .hint {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .image-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .image-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .image-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fbfdff;
+    }
+
+    .image-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: contain;
+      background: #f0f3f7;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .image-card-body {
+      padding: 10px;
+    }
+
+    .image-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .actions {
+      display: grid;
+      gap: 10px;
+    }
+
+    button {
+      border: 1px solid #aeb8c5;
+      border-radius: 6px;
+      background: #f8fafc;
+      color: #172033;
+      font: inherit;
+      font-weight: 700;
+      padding: 10px 12px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      border-color: #8795a6;
+      background: #eef2f6;
+    }
+
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    button.primary:hover {
+      background: var(--accent-dark);
+      border-color: var(--accent-dark);
+    }
+
+    button.danger {
+      color: var(--danger);
+      border-color: #e1b4b4;
+      background: #fff7f7;
+    }
+
+    button:disabled {
+      opacity: 0.58;
+      cursor: not-allowed;
+    }
+
+    .result {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    .result a {
+      color: #1155cc;
+      word-break: break-all;
+    }
+
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .mini-table th,
+    .mini-table td {
+      border: 1px solid var(--line);
+      padding: 7px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .mini-table th {
+      width: 88px;
+      background: var(--soft);
+    }
+
+    .submit-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(15, 23, 42, 0.58);
+    }
+
+    .submit-overlay.show {
+      display: flex;
+    }
+
+    .submit-box {
+      width: min(560px, 100%);
+      border-radius: 8px;
+      border: 2px solid #f59e0b;
+      background: #fff8e6;
+      padding: 30px 26px;
+      text-align: center;
+      box-shadow: 0 18px 50px rgba(15, 23, 42, 0.25);
+    }
+
+    .submit-box strong {
+      display: block;
+      color: #9d3f05;
+      font-size: clamp(26px, 5vw, 42px);
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+
+    .submit-box span {
+      display: block;
+      color: #334155;
+      font-size: clamp(17px, 2.4vw, 22px);
+      font-weight: 700;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .side {
+        position: static;
+      }
+
+      .grid,
+      .grid.two,
+      .image-list {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .status {
+        max-width: none;
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <h1>발명계획서 제출</h1>
+        <div class="deadline">제출 마감: 8.14. 자정까지</div>
+      </div>
+      <div id="status" class="status">작성 대기 중</div>
+    </header>
+
+    <div class="layout">
+      <form id="planForm" class="panel" autocomplete="off">
+        <h2 class="section-title">학생 정보</h2>
+        <div class="grid two">
+          <div class="field">
+            <label for="studentId">학번</label>
+            <input id="studentId" required inputmode="numeric" maxlength="4" placeholder="예: 1101">
+          </div>
+          <div class="field">
+            <label for="studentName">이름</label>
+            <input id="studentName" required placeholder="이름을 입력하세요">
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 class="section-title">작품 내용</h2>
+        <div class="grid two">
+          <div class="field wide">
+            <label for="motivation">1. 제작 동기(목적)</label>
+            <textarea id="motivation" required></textarea>
+          </div>
+          <div class="field wide">
+            <label for="content">2. 작품 내용(원리, 구조, 동작, 기능 등)</label>
+            <textarea id="content" required></textarea>
+          </div>
+          <div class="field wide">
+            <label for="difference">3. 기존 발명품보다 좋은점(차별성/장점)</label>
+            <textarea id="difference" required></textarea>
+          </div>
+          <div class="field wide">
+            <label for="effect">4. 적용 효과(기대 효과)</label>
+            <textarea id="effect" required></textarea>
+          </div>
+          <div class="field wide">
+            <label for="extraMemo">추가 메모</label>
+            <textarea id="extraMemo" style="min-height: 90px;"></textarea>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 class="section-title">작품 그림 또는 사진</h2>
+        <div class="image-controls">
+          <div>
+            <input id="imageInput" type="file" accept="image/*" multiple>
+            <p class="hint">최대 6장까지 첨부됩니다. 큰 사진은 제출 전에 자동으로 축소됩니다.</p>
+          </div>
+          <button id="clearImagesBtn" class="danger" type="button">사진 모두 삭제</button>
+        </div>
+        <div id="imageList" class="image-list"></div>
+      </form>
+
+      <aside class="panel side">
+        <h2 class="section-title">저장 및 제출</h2>
+        <div class="actions">
+          <button id="saveDraftBtn" type="button">임시저장</button>
+          <button id="downloadDocBtn" type="button">DOC 파일로 저장</button>
+          <button id="loadDocBtn" type="button">저장 문서 불러오기</button>
+          <button id="clearAllBtn" class="danger" type="button">작성 내용 지우기</button>
+          <input id="draftFileInput" type="file" accept=".doc,.html,text/html,application/msword" hidden>
+          <button id="submitBtn" class="primary" type="button">선생님에게 발송</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <table class="mini-table">
+          <tbody>
+            <tr>
+              <th>임시저장</th>
+              <td id="draftState">아직 없음</td>
+            </tr>
+            <tr>
+              <th>사진</th>
+              <td id="imageCount">0장</td>
+            </tr>
+            <tr>
+              <th>제출</th>
+              <td>Google Drive 문서와 제출명단에 반영</td>
+            </tr>
+            <tr>
+              <th>웹앱</th>
+              <td id="webAppState">확인 중</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div id="result" class="result"></div>
+      </aside>
+    </div>
+  </main>
+
+  <div id="submitOverlay" class="submit-overlay" aria-live="assertive" role="alert">
+    <div class="submit-box">
+      <strong>제출 중입니다</strong>
+      <span>창을 닫지 말고 잠시만 기다려 주세요.</span>
+    </div>
+  </div>
+
+  <script>
+    const APP_VERSION = "invent-plan-form-2026.1";
+    const DRAFT_KEY = "inventPlanDraft.2026.grade1";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxZYnJ6kia7WntxlWjuLc8cJ6BAFnct3cDDtSWJ9uhlLt5bgCx4WgAUtXIERkTZuu6O/exec";
+    const MAX_IMAGES = 6;
+    const MAX_IMAGE_WIDTH = 900;
+    const MAX_IMAGE_HEIGHT = 650;
+    const DOC_IMAGE_MAX_WIDTH = 320;
+    const DOC_IMAGE_MAX_HEIGHT = 210;
+    const JPEG_QUALITY = 0.82;
+    const KEEP_ORIGINAL_LIMIT = 900 * 1024;
+    const FIELD_IDS = [
+      "studentId", "studentName", "motivation", "content",
+      "difference", "effect", "extraMemo"
+    ];
+
+    let imageItems = [];
+    let dirty = false;
+    let saveTimer = null;
+
+    const form = document.getElementById("planForm");
+    const statusEl = document.getElementById("status");
+    const draftStateEl = document.getElementById("draftState");
+    const webAppStateEl = document.getElementById("webAppState");
+    const imageCountEl = document.getElementById("imageCount");
+    const imageListEl = document.getElementById("imageList");
+    const resultEl = document.getElementById("result");
+    const submitBtn = document.getElementById("submitBtn");
+    const submitOverlay = document.getElementById("submitOverlay");
+
+    init();
+
+    function init() {
+      bindEvents();
+      loadLocalDraft();
+      updateImageCount();
+      updateWebAppState();
+    }
+
+    function bindEvents() {
+      form.addEventListener("input", () => {
+        markDirty();
+        scheduleAutoSave();
+      });
+
+      form.addEventListener("change", () => {
+        markDirty();
+        scheduleAutoSave();
+      });
+
+      document.getElementById("imageInput").addEventListener("change", handleImageFiles);
+      document.getElementById("clearImagesBtn").addEventListener("click", () => {
+        imageItems = [];
+        renderImages();
+        saveDraft(false);
+      });
+      document.getElementById("saveDraftBtn").addEventListener("click", () => saveDraft(false));
+      document.getElementById("downloadDocBtn").addEventListener("click", downloadDraftDocument);
+      document.getElementById("loadDocBtn").addEventListener("click", () => {
+        document.getElementById("draftFileInput").click();
+      });
+      document.getElementById("draftFileInput").addEventListener("change", importDraftDocument);
+      document.getElementById("clearAllBtn").addEventListener("click", clearAllForm);
+      submitBtn.addEventListener("click", submitToTeacher);
+
+      window.addEventListener("beforeunload", (event) => {
+        if (!dirty) {
+          return;
+        }
+        event.preventDefault();
+        event.returnValue = "";
+      });
+    }
+
+    function normalizeWebAppUrl(value) {
+      let url = String(value || "").trim().replace(/\s/g, "");
+      if (!url) {
+        return "";
+      }
+      url = url.replace(/\/dev([?#].*)?$/, "/exec");
+      url = url.replace(/[?#].*$/, "");
+      return url;
+    }
+
+    function isValidWebAppUrl(value) {
+      return /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec$/.test(String(value || ""));
+    }
+
+    function getConfiguredWebAppUrl() {
+      return normalizeWebAppUrl(WEB_APP_URL);
+    }
+
+    function updateWebAppState() {
+      if (typeof google !== "undefined" && google.script && google.script.run) {
+        webAppStateEl.textContent = "Apps Script 내부 실행";
+        return;
+      }
+
+      if (isValidWebAppUrl(getConfiguredWebAppUrl())) {
+        webAppStateEl.textContent = "코드에 설정됨";
+        return;
+      }
+
+      webAppStateEl.textContent = "코드 설정 필요";
+      setStatus("선생님이 HTML 코드의 WEB_APP_URL에 Apps Script /exec 주소를 넣어야 제출할 수 있습니다.", "warn");
+    }
+
+    function ensureWebAppUrlConfigured() {
+      if (isValidWebAppUrl(getConfiguredWebAppUrl())) {
+        return true;
+      }
+      setStatus("HTML 코드의 WEB_APP_URL에 /exec 주소가 아직 설정되지 않았습니다.", "error");
+      return false;
+    }
+
+    async function handleImageFiles(event) {
+      const files = Array.from(event.target.files || []);
+      if (!files.length) {
+        return;
+      }
+
+      const available = MAX_IMAGES - imageItems.length;
+      if (available <= 0) {
+        setStatus(`사진은 최대 ${MAX_IMAGES}장까지 첨부됩니다.`, "warn");
+        event.target.value = "";
+        return;
+      }
+
+      setStatus("사진을 준비하는 중", "warn");
+      const selected = files.slice(0, available);
+
+      try {
+        for (const file of selected) {
+          const item = await makeImageItem(file);
+          imageItems.push(item);
+        }
+        renderImages();
+        saveDraft(true);
+        setStatus("사진이 추가되었습니다.", "ok");
+      } catch (error) {
+        setStatus(error.message || String(error), "error");
+      } finally {
+        event.target.value = "";
+      }
+    }
+
+    async function makeImageItem(file) {
+      if (!file.type || !file.type.startsWith("image/")) {
+        throw new Error("이미지 파일만 첨부할 수 있습니다.");
+      }
+
+      const originalDataUrl = await readFileAsDataUrl(file);
+      let dataUrl = originalDataUrl;
+      let mimeType = file.type;
+      let fileName = file.name || "image";
+
+      if (!(file.type === "image/png" && file.size <= KEEP_ORIGINAL_LIMIT)) {
+        const image = await loadImage(originalDataUrl);
+        const scale = Math.min(MAX_IMAGE_WIDTH / image.width, MAX_IMAGE_HEIGHT / image.height, 1);
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1, Math.round(image.width * scale));
+        canvas.height = Math.max(1, Math.round(image.height * scale));
+        const context = canvas.getContext("2d");
+        context.fillStyle = "#ffffff";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        dataUrl = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
+        mimeType = "image/jpeg";
+        fileName = fileName.replace(/\.[^.]+$/, "") + ".jpg";
+      }
+
+      const outputImage = await loadImage(dataUrl);
+      const docSize = fitImageSize(outputImage.width, outputImage.height, DOC_IMAGE_MAX_WIDTH, DOC_IMAGE_MAX_HEIGHT);
+
+      return {
+        id: String(Date.now()) + "-" + Math.random().toString(16).slice(2),
+        name: fileName,
+        mimeType: mimeType,
+        dataUrl: dataUrl,
+        caption: "",
+        width: docSize.width,
+        height: docSize.height,
+        originalSize: file.size
+      };
+    }
+
+    function fitImageSize(width, height, maxWidth, maxHeight) {
+      if (!width || !height) {
+        return {
+          width: maxWidth,
+          height: maxHeight
+        };
+      }
+
+      const ratio = Math.min(maxWidth / width, maxHeight / height, 1);
+      return {
+        width: Math.max(1, Math.round(width * ratio)),
+        height: Math.max(1, Math.round(height * ratio))
+      };
+    }
+
+    function readFileAsDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ""));
+        reader.onerror = () => reject(new Error("사진을 읽을 수 없습니다."));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function loadImage(dataUrl) {
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = () => reject(new Error("사진 형식을 처리할 수 없습니다."));
+        image.src = dataUrl;
+      });
+    }
+
+    function renderImages() {
+      imageListEl.innerHTML = "";
+      imageItems.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "image-card";
+
+        const image = document.createElement("img");
+        image.src = item.dataUrl;
+        image.alt = item.name;
+        card.appendChild(image);
+
+        const body = document.createElement("div");
+        body.className = "image-card-body";
+
+        const meta = document.createElement("div");
+        meta.className = "image-meta";
+        meta.innerHTML = `<span>${escapeHtml(item.name)}</span><button type="button" data-remove="${item.id}">삭제</button>`;
+        body.appendChild(meta);
+
+        const label = document.createElement("label");
+        label.textContent = `그림 ${index + 1} 설명`;
+        label.setAttribute("for", `caption-${item.id}`);
+        body.appendChild(label);
+
+        const caption = document.createElement("input");
+        caption.id = `caption-${item.id}`;
+        caption.value = item.caption || "";
+        caption.placeholder = "사진 설명";
+        caption.addEventListener("input", () => {
+          item.caption = caption.value;
+          markDirty();
+          scheduleAutoSave();
+        });
+        body.appendChild(caption);
+
+        card.appendChild(body);
+        imageListEl.appendChild(card);
+      });
+
+      imageListEl.querySelectorAll("button[data-remove]").forEach((button) => {
+        button.addEventListener("click", () => {
+          imageItems = imageItems.filter((item) => item.id !== button.dataset.remove);
+          renderImages();
+          saveDraft(false);
+        });
+      });
+
+      updateImageCount();
+    }
+
+    function updateImageCount() {
+      imageCountEl.textContent = `${imageItems.length}장`;
+    }
+
+    function collectPayload() {
+      const payload = {};
+      FIELD_IDS.forEach((id) => {
+        payload[id] = document.getElementById(id).value.trim();
+      });
+      payload.images = imageItems.map((item) => ({
+        name: item.name,
+        mimeType: item.mimeType,
+        dataUrl: item.dataUrl,
+        caption: item.caption || "",
+        width: item.width || DOC_IMAGE_MAX_WIDTH,
+        height: item.height || DOC_IMAGE_MAX_HEIGHT
+      }));
+      payload.appVersion = APP_VERSION;
+      return payload;
+    }
+
+    function loadPayload(payload) {
+      FIELD_IDS.forEach((id) => {
+        const element = document.getElementById(id);
+        if (element && Object.prototype.hasOwnProperty.call(payload, id)) {
+          element.value = payload[id] || "";
+        }
+      });
+
+      imageItems = Array.isArray(payload.images) ? payload.images.map((item) => ({
+        id: String(Date.now()) + "-" + Math.random().toString(16).slice(2),
+        name: item.name || "image.jpg",
+        mimeType: item.mimeType || "image/jpeg",
+        dataUrl: item.dataUrl || "",
+        caption: item.caption || "",
+        width: item.width || DOC_IMAGE_MAX_WIDTH,
+        height: item.height || DOC_IMAGE_MAX_HEIGHT,
+        originalSize: item.originalSize || 0
+      })).filter((item) => item.dataUrl) : [];
+      renderImages();
+      dirty = false;
+    }
+
+    function validateClient(payload) {
+      const required = [
+        ["studentId", "학번"],
+        ["studentName", "이름"],
+        ["motivation", "제작 동기"],
+        ["content", "작품 내용"],
+        ["difference", "차별성"],
+        ["effect", "기대 효과"]
+      ];
+
+      for (const [key, label] of required) {
+        if (!payload[key]) {
+          return `${label} 항목을 입력해 주세요.`;
+        }
+      }
+
+      if (payload.images.length === 0) {
+        return "작품 그림 또는 사진을 1장 이상 첨부해 주세요.";
+      }
+
+      if (payload.images.length > MAX_IMAGES) {
+        return `사진은 최대 ${MAX_IMAGES}장까지 첨부됩니다.`;
+      }
+
+      return "";
+    }
+
+    function markDirty() {
+      dirty = true;
+    }
+
+    function scheduleAutoSave() {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => saveDraft(true), 700);
+    }
+
+    function saveDraft(silent) {
+      const payload = collectPayload();
+
+      try {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(payload));
+        draftStateEl.textContent = new Date().toLocaleString("ko-KR");
+        dirty = false;
+        if (!silent) {
+          setStatus("임시저장되었습니다.", "ok");
+        }
+      } catch (error) {
+        const textOnly = Object.assign({}, payload, { images: [] });
+        localStorage.removeItem(DRAFT_KEY);
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(textOnly));
+        draftStateEl.textContent = "텍스트만 저장됨";
+        setStatus("브라우저 저장 공간이 부족하여 사진은 문서 저장 기능으로 보관해 주세요.", "warn");
+      }
+    }
+
+    function loadLocalDraft() {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) {
+        return;
+      }
+
+      try {
+        const payload = JSON.parse(raw);
+        loadPayload(payload);
+        draftStateEl.textContent = "임시저장 불러옴";
+        setStatus("임시저장 내용을 불러왔습니다.", "ok");
+      } catch (error) {
+        setStatus("임시저장 내용을 불러오지 못했습니다.", "warn");
+      }
+    }
+
+    function downloadDraftDocument() {
+      const payload = collectPayload();
+      const html = buildDraftHtml(payload);
+      const fileName = safeFileName(`발명계획서_${payload.studentId || "학번"}_${payload.studentName || "이름"}_임시저장.doc`);
+      downloadBlob("\ufeff" + html, fileName, "application/msword;charset=utf-8");
+      saveDraft(true);
+      setStatus("DOC 파일로 저장되었습니다.", "ok");
+    }
+
+    function buildDraftHtml(payload) {
+      const draftJson = JSON.stringify(payload).replace(/</g, "\\u003c");
+      const closeScript = "<" + "/script>";
+      const imageHtml = payload.images.length
+        ? payload.images.map((image, index) => `
+          <div class="figure-block">
+            <p class="figure-title">그림 ${index + 1}</p>
+            <img src="${image.dataUrl}" alt="${escapeHtml(image.name)}" width="${image.width || DOC_IMAGE_MAX_WIDTH}" height="${image.height || DOC_IMAGE_MAX_HEIGHT}" style="width:${image.width || DOC_IMAGE_MAX_WIDTH}px;height:${image.height || DOC_IMAGE_MAX_HEIGHT}px;">
+            <p class="caption">${escapeHtml(image.caption || image.name || "")}</p>
+          </div>
+        `).join("")
+        : "<p>첨부 사진 없음</p>";
+      const sectionRows = [
+        ["1. 제작 동기(목적)", payload.motivation],
+        ["2. 작품 내용(원리, 구조, 동작, 기능 등)", payload.content],
+        ["작품 그림(사진)", imageHtml, true],
+        ["3. 기존 발명품보다 좋은점(차별성/장점)", payload.difference],
+        ["4. 적용 효과(기대 효과)", payload.effect],
+        ["추가 메모", payload.extraMemo]
+      ].map(([label, value, isHtml]) => `
+        <table class="section-table">
+          <tr><th>${escapeHtml(label)}</th></tr>
+          <tr><td>${isHtml ? value : nl2br(value)}</td></tr>
+        </table>
+      `).join("");
+
+      return `<!DOCTYPE html>
+<html lang="ko" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">
+<head>
+  <meta charset="utf-8">
+  <title>발명작품 계획서</title>
+  <style>
+    @page { margin: 0.75in; }
+    body { font-family: Arial, "Malgun Gothic", sans-serif; color: #172033; line-height: 1.45; }
+    h1 { margin: 0 0 8px; text-align: center; font-size: 20pt; }
+    .deadline { margin: 0 0 18px; text-align: center; color: #a12626; font-size: 12pt; font-weight: bold; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+    .meta th, .meta td { border: 1px solid #9aa7b3; padding: 7px 9px; font-size: 10pt; }
+    .meta th { width: 18%; background: #e6f3f7; text-align: center; }
+    .section-table { margin-top: 12px; page-break-inside: avoid; }
+    .section-table th { border: 1px solid #9aa7b3; background: #e6f3f7; padding: 7px 9px; text-align: left; font-size: 10.5pt; }
+    .section-table td { border: 1px solid #9aa7b3; padding: 10px 11px; min-height: 42px; font-size: 10.5pt; vertical-align: top; }
+    .figure-block { margin: 8px 0 14px; page-break-inside: avoid; }
+    .figure-title { margin: 0 0 5px; font-size: 10pt; font-weight: bold; }
+    img { border: 1px solid #ccd5df; }
+    .caption { margin: 5px 0 0; color: #555; font-size: 9pt; }
+    .note { color: #555; font-size: 9pt; }
+  </style>
+</head>
+<body>
+  <h1>발명계획서</h1>
+  <p class="deadline">제출 마감: 8.14. 자정까지</p>
+  <table class="meta">
+    <tr><th>학번</th><td>${escapeHtml(payload.studentId)}</td><th>이름</th><td>${escapeHtml(payload.studentName)}</td></tr>
+  </table>
+  ${sectionRows}
+  <p class="note">이 문서는 임시저장 파일입니다.</p>
+  <script type="application/json" id="draft-data">${draftJson}${closeScript}
+</body>
+</html>`;
+    }
+
+    function downloadBlob(text, fileName, type) {
+      const blob = new Blob([text], { type });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    async function importDraftDocument(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) {
+        return;
+      }
+
+      try {
+        const text = await file.text();
+        const match = text.match(/<script type="application\/json" id="draft-data">([\s\S]*?)<\/script>/);
+        if (!match) {
+          throw new Error("저장된 발명계획서 문서가 아닙니다.");
+        }
+        const payload = JSON.parse(match[1]);
+        loadPayload(payload);
+        saveDraft(true);
+        setStatus("저장 문서를 불러왔습니다.", "ok");
+      } catch (error) {
+        setStatus(error.message || String(error), "error");
+      } finally {
+        event.target.value = "";
+      }
+    }
+
+    function clearAllForm() {
+      const ok = window.confirm("작성한 내용과 첨부한 사진을 모두 지울까요?");
+      if (!ok) {
+        return;
+      }
+
+      FIELD_IDS.forEach((id) => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.value = "";
+        }
+      });
+      imageItems = [];
+      renderImages();
+      resultEl.innerHTML = "";
+      localStorage.removeItem(DRAFT_KEY);
+      draftStateEl.textContent = "아직 없음";
+      dirty = false;
+      setStatus("작성 내용이 지워졌습니다.", "ok");
+    }
+
+    function submitToTeacher() {
+      const payload = collectPayload();
+      const error = validateClient(payload);
+      if (error) {
+        setStatus(error, "error");
+        return;
+      }
+
+      const canUseGoogleScript = typeof google !== "undefined" && google.script && google.script.run;
+      if (!canUseGoogleScript && !ensureWebAppUrlConfigured()) {
+        return;
+      }
+
+      saveDraft(true);
+      submitBtn.disabled = true;
+      resultEl.innerHTML = "";
+      showSubmittingOverlay();
+      setStatus("제출 중입니다. 창을 닫지 마세요.", "warn");
+
+      if (canUseGoogleScript) {
+        google.script.run
+          .withSuccessHandler(handleSubmitSuccess)
+          .withFailureHandler(handleSubmitFailure)
+          .submitPlan(payload);
+        return;
+      }
+
+      submitViaWebApp(payload);
+    }
+
+    function handleSubmitSuccess(result) {
+      submitBtn.disabled = false;
+      hideSubmittingOverlay();
+      if (!result || !result.ok) {
+        setStatus((result && result.message) || "제출에 실패했습니다.", "error");
+        return;
+      }
+
+      dirty = false;
+      localStorage.removeItem(DRAFT_KEY);
+      draftStateEl.textContent = "제출 완료";
+      setStatus(result.message || "제출이 완료되었습니다.", "ok");
+      resultEl.innerHTML = "<strong>제출 완료</strong>";
+    }
+
+    function handleSubmitFailure(error) {
+      submitBtn.disabled = false;
+      hideSubmittingOverlay();
+      setStatus((error && error.message) || String(error), "error");
+    }
+
+    function submitViaWebApp(payload) {
+      const targetUrl = getConfiguredWebAppUrl();
+      if (!isValidWebAppUrl(targetUrl)) {
+        handleSubmitFailure(new Error("Apps Script 웹앱 주소가 설정되지 않았습니다."));
+        return;
+      }
+
+      try {
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = targetUrl;
+        form.target = "_blank";
+        form.style.display = "none";
+
+        const payloadInput = document.createElement("input");
+        payloadInput.type = "hidden";
+        payloadInput.name = "payload";
+        payloadInput.value = JSON.stringify(payload);
+        form.appendChild(payloadInput);
+
+        const responseTypeInput = document.createElement("input");
+        responseTypeInput.type = "hidden";
+        responseTypeInput.name = "responseType";
+        responseTypeInput.value = "html";
+        form.appendChild(responseTypeInput);
+
+        document.body.appendChild(form);
+        form.submit();
+        form.remove();
+
+        submitBtn.disabled = false;
+        hideSubmittingOverlay();
+        draftStateEl.textContent = "새 탭 결과 확인";
+        setStatus("새 탭에서 제출 완료 문구를 확인해 주세요.", "warn");
+        resultEl.innerHTML = "<strong>새 탭에서 제출 결과를 확인해 주세요.</strong>";
+      } catch (error) {
+        handleSubmitFailure(error);
+      }
+    }
+
+    function showSubmittingOverlay() {
+      submitOverlay.classList.add("show");
+    }
+
+    function hideSubmittingOverlay() {
+      submitOverlay.classList.remove("show");
+    }
+
+    function setStatus(text, type) {
+      statusEl.textContent = text;
+      statusEl.className = `status ${type || ""}`.trim();
+    }
+
+    function escapeHtml(value) {
+      return String(value || "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[char]));
+    }
+
+    function nl2br(value) {
+      return escapeHtml(value).replace(/\n/g, "<br>");
+    }
+
+    function safeFileName(value) {
+      return String(value || "발명계획서.doc")
+        .replace(/[\\/:*?"<>|#%{}~&]/g, "_")
+        .replace(/\s+/g, "_")
+        .slice(0, 140);
+    }
+  </script>
+</body>
+</html>
